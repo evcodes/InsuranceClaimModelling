@@ -24,7 +24,9 @@ car_insurance_data
 After exploring these two datasets, I would have more information about vehicular accidents in the United States paired with information and formulas to find the risk that some person may posess based on their heuristics. 
 
 
+I found this extra dataset from All State's insurance claim challenge and I feel like deriving some information from it would be useful for my final project.
 ```{r}
-bene_data = read.csv('./data/bene_file.csv',header = TRUE)
+claims_data = read.csv('./data/claims.csv',nrows = 100,header = TRUE)
+claims_data
 ```
 
