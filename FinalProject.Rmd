@@ -24,7 +24,7 @@ car_insurance_data
 After exploring these two datasets, I would have more information about vehicular accidents in the United States paired with information and formulas to find the risk that some person may posess based on their heuristics. 
 
 
-I found this extra dataset from All State's insurance claim challenge and I feel like deriving some information from it would be useful for my final project.
+I found this extra dataset from All State's insurance claim challenge and I feel like deriving some information from it would be useful for my final project. It contains information about the driver like education level, employment status, how long they have been insured, coverage, marital status, income, location code, months since last claim, claim ammount, reason for claim, vehicle class and size. Therefore these rich features will allow me to get very granular with my analysis.
 ```{r}
 claims_data = read.csv('./data/claims.csv',nrows = 100,header = TRUE)
 claims_data
