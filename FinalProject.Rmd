@@ -1,0 +1,30 @@
+---
+title: "FinalProjectEDA"
+author: "Eddy D. Varela"
+date: "2/22/2020"
+output: pdf_document
+---
+
+For my final project, I will be analyzing a dataset on car accidents in the United States and risk assesment from an insurance company based on several features. The accident dataset contains all the reported car accidents from Feb 2016 to Dec 2019 and contains many useful features. Features like severity, location (city, county,state), weather information (temperature, humidity, visibility, and precipitation), and civil twilight will be useful in modeling car accidents. Furthermore I will be exploring different factors that contribute differences in car insurance premiums.
+
+Some challenges that I foresee are working with this massive dataset of 1.5M entries and 49 features but I believe it will still be a very useful dataset. I may consider working with smaller samples at first. Conversely, I may look at different time periods and observe any differences.
+```{r}
+car_accident_data = read.csv("./data/US_Accidents_Dec19.csv",header = TRUE, nrows = 1000)
+head(car_accident_data)
+
+```
+
+The car insurance data (from Australia) provides 67k observations with 11 features about a client's 'exposure' to risk. This value goes from 0-1 and we may want to explore if this value is a function of some combination of variables. This dataset contains features like vehicular value, number of claims, the cost of each claim, vehicle information(vehicle age, vehicle body), client information (age and gender). It was suprisingly difficult to find a US dataset around insurance claims cost so I will use this dataset as a representative proxy to model an insurance pricing strategy.
+```{r}
+car_insurance_data = read.csv("./data/car.csv", header= TRUE)
+car_insurance_data
+
+```
+
+After exploring these two datasets, I would have more information about vehicular accidents in the United States paired with information and formulas to find the risk that some person may posess based on their heuristics. 
+
+
+```{r}
+bene_data = read.csv('./data/bene_file.csv',header = TRUE)
+```
+
