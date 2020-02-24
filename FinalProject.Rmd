@@ -1,5 +1,5 @@
 ---
-title: "FinalProjectEDA"
+title: "Predicting Vehicular Risk with Insurance & Car Accident Data"
 author: "Eddy D. Varela"
 date: "2/22/2020"
 output: pdf_document
