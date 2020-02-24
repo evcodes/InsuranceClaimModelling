@@ -7,26 +7,133 @@ output: pdf_document
 
 For my final project, I will be analyzing a dataset on car accidents in the United States and risk assesment from an insurance company based on several features. The accident dataset contains all the reported car accidents from Feb 2016 to Dec 2019 and contains many useful features. Features like severity, location (city, county,state), weather information (temperature, humidity, visibility, and precipitation), and civil twilight will be useful in modeling car accidents. Furthermore I will be exploring different factors that contribute differences in car insurance premiums.
 
-Some challenges that I foresee are working with this massive dataset of 1.5M entries and 49 features but I believe it will still be a very useful dataset. I may consider working with smaller samples at first. Conversely, I may look at different time periods and observe any differences.
+Some challenges that I foresee are working with this massive dataset of 1.5M entries and 49 features but I believe it will still be a very useful dataset. I may consider working with smaller samples at first and removig extrenous features. Conversely, I may focus on a particular time period (say the year 2016) and and compare with other years.
 ```{r}
-car_accident_data = read.csv("./data/US_Accidents_Dec19.csv",header = TRUE, nrows = 1000)
+car_accident_data = read.csv("./data/US_Accidents_Dec19.csv",header = TRUE, nrows = 50000)
 head(car_accident_data)
 
+# Cleaning data to capture the numerical and binary values
+numNameList = c("Precipitation.in.", "Wind_Speed.mph.","Visibility.mi.",
+                "Pressure.in.","Humidity...","Temperature.F.","Severity")
+locNameList = c("Start_Time", "End_Time", "Start_Lat", "Start_Lang",
+                "Street", "City", "County", "Zipcode", "State" )
+
+numIdx= sort(match(numNameList, names(car_accident_data)))
+locIdx= sort(match(locNameList, names(car_accident_data)))
+
+# Traffic calming, turning loop, all false, so removing them
+tfIdx = c(44, 46:47)
+
+numericalData = car_accident_data[,numIdx] 
+locData = car_accident_data[,locIdx]
+tfData = car_accident_data[,tfIdx]
 ```
+
+Summary statistic
+```{r results="asis"}
+
+averages = apply(numericalData, 2, mean, na.rm = TRUE)
+variances = apply(numericalData,2, var, na.rm = TRUE)
+iqrs= apply(numericalData,2,IQR, na.rm = TRUE)
+medians = apply(numericalData,2,median, na.rm = TRUE)
+
+# Build a table
+dataTable <-data.frame(
+  Mean = c(averages["Severity"], averages["Temperature.F."],
+           averages["Humidity..."], averages["Pressure.in."],
+           averages["Visibility.mi."], averages["Wind_Speed.mph."],
+           averages["Precipitation.in."]),
+  
+  Variance = c(variances["Severity"], variances["Temperature.F."],
+           variances["Humidity..."], variances["Pressure.in."],
+           variances["Visibility.mi."], variances["Wind_Speed.mph."],
+           variances["Precipitation.in."]),
+  
+  Median = c(medians["Severity"], medians["Temperature.F."],
+           medians["Humidity..."], medians["Pressure.in."],
+           medians["Visibility.mi."], medians["Wind_Speed.mph."],
+           medians["Precipitation.in."]),
+  
+  IQR = c(iqrs["Severity"], iqrs["Temperature.F."],
+           iqrs["Humidity..."], iqrs["Pressure.in."],
+           iqrs["Visibility.mi."], iqrs["Wind_Speed.mph."],
+           iqrs["Precipitation.in."]))
+
+rownames(dataTable) = c("Severity", "Temp", "Humidity",
+                        "Pressure", "Visibility", "Wind Speed", "Precip.")
+library(xtable)
+options(xtable.floating = FALSE)
+options(xtable.timestamp = "")
+print(xtable(dataTable), comment=FALSE)
+
+```
+
+Histogram of TF values
+```{r}
+mainTitle = c("Traffic Signal", "Sunrise/Sunset", "Civil Twilight")
+xlabels = c("Traffic Signal present", "Time of day", "Day/Night")
+color = c("red", "blue", "green")
+
+  "Traffic Signal Present?"
+  countTrue = length(which(tfData$Traffic_Signal == "True"))
+  countFalse = length(which(tfData$Traffic_Signal == "False"))
+  "True: "
+  (countTrue / (countFalse+countTrue)) *100
+  "False: "
+  (countFalse / (countFalse+countTrue)) *100
+  
+  "Sunrise or Sunset"
+  dayCount = length(which(tfData$Sunrise_Sunset == "Day"))
+  nightCount = length(which(tfData$Sunrise_Sunset == "Night"))
+  "Sunrise: "
+  (dayCount / (dayCount+nightCount)) *100
+  "Sunset: "
+  (nightCount/(dayCount + nightCount)) * 100
+  
+  "Civil Twilight"
+  day = length(which(tfData$Civil_Twilight == "Day"))
+  night = length(which(tfData$Civil == "Night"))
+  "Daytime:" 
+  (day / (day+night)) *100
+  "NightTime:" 
+  (night / (day + night)) * 100
+
+
+# tf_hist = hist(tfData)
+```
+
 
 The car insurance data (from Australia) provides 67k observations with 11 features about a client's 'exposure' to risk. This value goes from 0-1 and we may want to explore if this value is a function of some combination of variables. This dataset contains features like vehicular value, number of claims, the cost of each claim, vehicle information(vehicle age, vehicle body), client information (age and gender). It was suprisingly difficult to find a US dataset around insurance claims cost so I will use this dataset as a representative proxy to model an insurance pricing strategy.
 ```{r}
 car_insurance_data = read.csv("./data/car.csv", header= TRUE)
-car_insurance_data
+head(car_insurance_data)
 
 ```
 
 After exploring these two datasets, I would have more information about vehicular accidents in the United States paired with information and formulas to find the risk that some person may posess based on their heuristics. 
 
 
-I found this extra dataset from All State's insurance claim challenge and I feel like deriving some information from it would be useful for my final project. It contains information about the driver like education level, employment status, how long they have been insured, coverage, marital status, income, location code, months since last claim, claim ammount, reason for claim, vehicle class and size. Therefore these rich features will allow me to get very granular with my analysis.
+I found this extra dataset from AllState's insurance claim challenge and I feel like deriving some information from it would be useful for my final project. It contains information about the driver like education level, employment status, how long they have been insured, coverage, marital status, income, location code, months since last claim, claim ammount, reason for claim, vehicle class and size. Therefore these rich features will allow me to get very granular with my analysis.
 ```{r}
-claims_data = read.csv('./data/claims.csv',nrows = 100,header = TRUE)
-claims_data
+claims_data = read.csv('./data/claims.csv',nrows = 500,header = TRUE)
+head(claims_data)
+```
+
+Histogram of claim amounts
+
+```{r fig.height=4}
+hist(claims_data$Claim.Amount, xlab = "Amount in Dollars", main="Histogram of claim prices", col = "forestgreen")
+```
+
+Histogram of insurer's income
+
+```{r fig.height = 5}
+hist(claims_data$Income, main = "Insurer's income levels", xlab = "Annual Salary" ,col ="blue")
+```
+
+
+
+```{r fig.height = 5}
+hist(claims_data$Monthly.Premium.Auto, col = "red", main = " Cost of monthly Insurance Premiums", xlab = "Monthly Premium")
 ```
 
